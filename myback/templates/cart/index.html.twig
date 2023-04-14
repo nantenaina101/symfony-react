@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier
+{% endblock %}
+
+{% block content %}
+
+	<h1>Mon panier</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Produit</th>
+				<th scope="col"></th>
+				<th scope="col">Quantité</th>
+				<th scope="col">Prix</th>
+				<th scope="col">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for product in cart %}
+
+				<tr>
+					<th scope="row"><img src="/uploads/{{ product.product.illustration }}" alt="{{ product.product.name }}" height="75px;"></th>
+					<td scope="row">
+						<b>{{ product.product.name }}</b><br><small>{{product.product.subtitle}}</small>
+					</td>
+					<td>{{ product.quantity }}</td>
+					<td>{{ ( product.product.price / 100 ) | number_format(2, ',', '.') }}</td>
+					<td class="priceTotalPerProduct">{{ (( product.quantity * product.product.price) / 100 ) | number_format(2, ',', '.') }}</td>
+				</tr>
+
+			{% endfor %}
+
+			<tr>
+				<th scope="col"></th>
+				<th scope="col"></th>
+				<th scope="col"></th>
+				<th scope="col">Total</th>
+				<th class="total" scope="col"></th>
+			</tr>
+
+
+		</tbody>
+	</table>
+	<script>
+		let priceTotalPerProduct = document.querySelectorAll(".priceTotalPerProduct");
+let somme = 0;
+priceTotalPerProduct.forEach((tot) => {
+somme += parseFloat(tot.textContent.replace(/,/g, "."));
+});
+
+let total = document.querySelector(".total");
+
+total.innerHTML = somme;
+	</script>
+
+{% endblock %}

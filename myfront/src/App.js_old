@@ -1,0 +1,54 @@
+import { useState, useEffect } from "react";
+import "./App.css";
+import Name from "./components/Name";
+import Login from "./components/Login";
+import ApiUsage from "./components/ApiUsage";
+import Todo from "./components/Todo";
+//import ShowListAndFilter from "./components/ShowListAndFilter";
+function App() {
+  
+  const [fname, setFname] = useState("Fitahiana")
+  
+  let [age, setAge] = useState(4)
+
+  useEffect((e) => {
+    console.log("Age change")
+  }, [age])
+
+  /*useEffect(() => {
+    document.title = `Vous êtes ${age} ans`;
+  })*/
+  
+  /*useEffect(() => {
+    setTimeout(() => {
+      setAge((age) => age + 1);
+    }, 1000);
+  });*/
+  
+      const [count, setCount] = useState(0);
+  const [calculation, setCalculation] = useState(0);
+
+  useEffect(() => {
+    setCalculation(() => count * 2);
+  }, [count]); // <- add the count variable her
+    
+    
+  
+  return (
+    <div className="App">
+      <Todo/>
+       <p>Count: {count}</p>
+      <button onClick={() => setCount((c) => c + 1)}>+</button>
+      <p>Calculation: {calculation}</p>
+      <p>{fname} <button onClick={() => { setFname("Nantenaina") }}>ChangeName</button></p>
+      <p>{ age } <button onClick={() => {setAge(age+1)}}>ChangeAge</button></p>
+      <Name firstname="Nantenaina" lastname="Randrian" email="nantenainasoa39@gmail.com"/>
+      <Name firstname="Fitahiana" lastname="Randrian" email="fitahiana@gmail.com"/>
+      <Name firstname="Fano" lastname="Randrian" email="fano@gmail.com" />
+      <Login />
+      <ApiUsage />
+    </div>
+  );
+}
+
+export default App;

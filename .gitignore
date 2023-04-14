@@ -1,0 +1,44 @@
+
+###> symfony/framework-bundle ###
+/myback/.env.local
+/myback/.env.local.php
+/myback/.env.*.local
+/myback/config/secrets/prod/prod.decrypt.private.php
+/myback/public/bundles/
+/myback/var/
+/myback/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/myback/phpunit.xml
+/myback.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+/myback.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/myfront/node_modules
+/myfront/.pnp
+/myfront/.pnp.js
+
+# testing
+/myfront/coverage
+
+# production
+/myfront/build
+
+# misc
+/myfront/.DS_Store
+/myfront/.env.local
+/myfront/.env.development.local
+/myfront/.env.test.local
+/myfront/.env.production.local
+
+/myfront/npm-debug.log*
+/myfront/yarn-debug.log*
+/myfront/yarn-error.log*

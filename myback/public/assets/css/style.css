@@ -1,0 +1,23 @@
+#register span.form-error-icon.badge.badge-danger.text-uppercase{
+
+    display: none;
+
+}
+
+.navbar-item-custom, .navbar-item-custom a{
+    color: #fff;
+}
+
+.footer-custom{
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #dfeaff;
+    padding-top: 20px;
+}
+
+div.product-item > a > h5{
+text-transform: uppercase;
+font-size: 18px;
+}

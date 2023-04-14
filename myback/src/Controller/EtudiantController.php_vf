@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Etudiant;
+use App\Repository\EtudiantRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class EtudiantController extends AbstractController
+{
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /*#[Route('/etudiants', name: 'app_etudiants')]
+    public function index(): JsonResponse
+    {
+        $etudiants = $this->entityManager->getRepository(Etudiant::class)->findAll();
+        return $this->json($etudiants);
+    }*/
+
+    #[Route('/etudiants', name: 'app_etudiants', methods: ['GET'])]
+    public function getBookList(EtudiantRepository $etudiantRepository, SerializerInterface $serializer): JsonResponse
+    {
+        $etudiants = $etudiantRepository->findAll();
+        $jsonEtudiantList = $serializer->serialize($etudiants, 'json');
+        return new JsonResponse($jsonEtudiantList, Response::HTTP_OK, [], true);
+    }
+
+
+    /*#[Route('/etudiant/{id}', name: 'app_single_etudiant')]
+    public function singleEtudiant($id): JsonResponse
+    {
+        $etudiant = $this->entityManager->getRepository(Etudiant::class)->findOneById($id);
+        return $this->json($etudiant);
+    }*/
+
+    #[Route('/etudiant/{id}', name: 'app_single_etudiant', methods: ['GET'])]
+    public function getOneEtudiant(int $id, SerializerInterface $serializer, EtudiantRepository $etudiantRepository): JsonResponse
+    {
+
+        $etudiant = $etudiantRepository->find($id);
+        if ($etudiant) {
+            $jsonEtudiant = $serializer->serialize($etudiant, 'json');
+            return new JsonResponse($jsonEtudiant, Response::HTTP_OK, [], true);
+        }
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+    }
+
+    #[Route('/etudiant/{id}', name: 'app_delete_etudiant', methods: ['DELETE'])]
+    public function deleteBook(Etudiant $etudiant): JsonResponse
+    {
+        $this->entityManager->remove($etudiant);
+
+        $this->entityManager->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/add/etudiant', name: "app_create_etudiant", methods: ['POST'])]
+    public function createBook(Request $request, SerializerInterface $serializer): JsonResponse
+    {
+
+        $etudiant = $serializer->deserialize($request->getContent(), Etudiant::class, 'json');
+        $this->entityManager->persist($etudiant);
+        $this->entityManager->flush();
+
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/etudiant/update/{id}', name: "app_update_etudiant", methods: ['PUT'])]
+
+    public function updateEtudiant(Request $request, SerializerInterface $serializer, Etudiant $currentEtudiant): JsonResponse
+    {
+        $updateEtudiant = $serializer->deserialize(
+            $request->getContent(),
+            Etudiant::class,
+            'json',
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $currentEtudiant]
+        );
+
+        $this->entityManager->persist($updateEtudiant);
+        $this->entityManager->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+}

@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Etudiant;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class EtudiantController extends AbstractController
+{
+    /*#[Route('/etudiant', name: 'app_etudiant')]
+    public function index(): Response
+    {
+        return $this->render('etudiant/index.html.twig', [
+            'controller_name' => 'EtudiantController',
+        ]);
+    }*/
+
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    #[Route('/etudiants', name: 'app_etudiants')]
+    public function index(): JsonResponse
+    {
+        $etudiants = $this->entityManager->getRepository(Etudiant::class)->findAll();
+        return $this->json($etudiants);
+    }
+
+    #[Route('/etudiant/{id}', name: 'app_single_etudiant')]
+    public function singleEtudiant($id): JsonResponse
+    {
+        $etudiant = $this->entityManager->getRepository(Etudiant::class)->findOneById($id);
+        return $this->json($etudiant);
+    }
+
+    
+    #[Route('/etudiant/add', name:"create_student", methods: ['POST'])]
+    public function createBook(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator): JsonResponse 
+    {
+
+        $book = $serializer->deserialize($request->getContent(), Book::class, 'json');
+        $em->persist($book);
+        $em->flush();
+
+        $jsonBook = $serializer->serialize($book, 'json', ['groups' => 'getBooks']);
+        
+        $location = $urlGenerator->generate('detailBook', ['id' => $book->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse($jsonBook, Response::HTTP_CREATED, ["Location" => $location], true);
+   }
+}
